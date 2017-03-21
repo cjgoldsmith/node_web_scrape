@@ -20,6 +20,5 @@ Example call:
 
 ## TODO
 * Add automated tests.
-* Use phantomjs to render webpages so that javascript heavy pages have a chance to render.
 * Add the ability to choose filters.
 * Add option to follow links recursively to depth ( n ).

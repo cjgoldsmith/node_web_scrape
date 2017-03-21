@@ -6,6 +6,9 @@ const walkers = require('walkers');
 const htmlparser = require('htmlparser2');
 const _ = require('lodash');
 const filters_lib = require('../lib/filters.js');
+const Horseman = require('node-horseman');
+
+var horseman = new Horseman();
 var program = require('commander');
 
 program
@@ -35,10 +38,11 @@ crawlFilters.register(filters_lib.filters.nocomments);
 crawlFilters.register(filters_lib.filters.noempty);
 
 var count = 0;
-request({url: program.url}, function(error, response, body) {
-
-    if(!error && response.statusCode == 200) {
-
+horseman
+    .open(program.url)
+    .timeout(10000)
+    .html('body')
+    .then(function(body) {
         var handler = new htmlparser.DomHandler(function(error, dom) {
             if(error) console.log(error);
             else {
@@ -54,6 +58,8 @@ request({url: program.url}, function(error, response, body) {
         var parser = new htmlparser.Parser(handler);
         parser.write(body);
         parser.done();
+
         console.log(`Instances of the word ${program.word} at ${program.url}: ${count}`);
-    }
-});
+
+        return horseman.close();
+    });
